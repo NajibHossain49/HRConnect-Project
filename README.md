@@ -31,8 +31,8 @@ HRConnect supports three primary roles, each with distinct permissions:
 - **Frontend**: TypeScript, Next.js
 - **Backend**: Nest.js
 - **Authentication**: JWT (JSON Web Token) with Bearer Token for route protection
-- **Database**: [Specify database used, e.g., PostgreSQL/MongoDB]
-- **Styling**: [Specify styling library if applicable, e.g., Tailwind CSS/Material UI]
+- **Database**: Database used PostgreSQL
+- **Styling**:  Styling library Tailwind CSS & DaisyUI
 
 ---
 
@@ -40,22 +40,22 @@ HRConnect supports three primary roles, each with distinct permissions:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/your-repo/hrconnect.git
-   cd hrconnect
+   git clone https://github.com/NajibHossain49/HRConnect.git
+   cd HRConnect
    ```
 
 2. **Install Dependencies**:
    ```bash
    # Install frontend dependencies
-   cd frontend
+   cd Practice-Frontend
    npm install
 
    # Install backend dependencies
-   cd ../backend
+   cd ../Practice-Backend
    npm install
    ```
 
-3. **Environment Variables**:
+<!-- 3. **Environment Variables**:
    - Create a `.env` file in the root directories of both the frontend and backend.
    - Define the following variables:
      ```env
@@ -65,22 +65,22 @@ HRConnect supports three primary roles, each with distinct permissions:
      # Backend
      DATABASE_URL=your_database_connection_string
      JWT_SECRET=your_jwt_secret_key
-     ```
+     ``` -->
 
-4. **Run the Application**:
+3. **Run the Application**:
    ```bash
    # Run backend
-   cd backend
+   cd Practice-Backend
    npm run start:dev
 
    # Run frontend
-   cd ../frontend
+   cd ../Practice-Frontend
    npm run dev
    ```
 
 5. **Access the Application**:
    - Frontend: [http://localhost:3000](http://localhost:3000)
-   - Backend API: [http://localhost:5000](http://localhost:5000)
+   - Backend API: [http://localhost:5000](http://localhost:3444)
 
 ---
 
