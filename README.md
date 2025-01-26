@@ -55,18 +55,6 @@ HRConnect supports three primary roles, each with distinct permissions:
    npm install
    ```
 
-<!-- 3. **Environment Variables**:
-   - Create a `.env` file in the root directories of both the frontend and backend.
-   - Define the following variables:
-     ```env
-     # Frontend
-     NEXT_PUBLIC_API_URL=http://localhost:5000
-
-     # Backend
-     DATABASE_URL=your_database_connection_string
-     JWT_SECRET=your_jwt_secret_key
-     ``` -->
-
 3. **Run the Application**:
    ```bash
    # Run backend
@@ -74,34 +62,13 @@ HRConnect supports three primary roles, each with distinct permissions:
    npm run start:dev
 
    # Run frontend
-   cd ../Practice-Frontend
+   cd Practice-Frontend
    npm run dev
    ```
 
 5. **Access the Application**:
    - Frontend: [http://localhost:3000](http://localhost:3000)
-   - Backend API: [http://localhost:5000](http://localhost:3444)
-
----
-
-## API Endpoints
-
-### Authentication
-- **POST** `/auth/login`: User login and JWT generation.
-
-### Admin Routes
-- **POST** `/roles`: Create a new role.
-- **POST** `/roles/assign`: Assign roles to employees.
-
-### HR Routes
-- **POST** `/employees`: Create a new employee record.
-- **GET** `/employees`: Retrieve employee information.
-
-### Manager Routes
-- **POST** `/tasks`: Assign a task to a team member.
-- **GET** `/tasks`: Retrieve all tasks.
-- **PATCH** `/tasks/:id`: Update the status of a task.
-- **DELETE** `/tasks/:id`: Delete a task.
+   - Backend API: [http://localhost:3444](http://localhost:3444)
 
 ---
 
