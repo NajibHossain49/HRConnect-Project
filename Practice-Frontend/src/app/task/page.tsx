@@ -4,7 +4,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import TopBar from "../components/topbar/page";
-import Link from "next/link";
+import toast from "react-hot-toast";
+import { Toaster } from 'react-hot-toast';
 
 interface TaskFormData {
   title: string;
@@ -20,9 +21,7 @@ interface Employee {
 export default function AddTask() {
   const router = useRouter();
   const [formData, setFormData] = useState<TaskFormData>({ title: "", description: "", assignedTo: "" });
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [employees, setEmployees] = useState<Employee[]>([]); // State to store employees
+  const [employees, setEmployees] = useState<Employee[]>([]);
 
   const fetchEmployees = async () => {
     const token = localStorage.getItem("token");
@@ -32,33 +31,30 @@ export default function AddTask() {
           Authorization: `Bearer ${token}`,
         },
       });
-    //   console.log(response.data);
       if (response.status === 200) {
         setEmployees(response.data);
       }
     } catch (error: any) {
+      toast.error("Failed to fetch employees. Please try again.");
       console.error("Error fetching employees:", error);
-      setError("Failed to fetch employees. Please try again.");
     }
   };
 
   useEffect(() => {
-    fetchEmployees(); // Fetch employees when the component mounts
+    fetchEmployees();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
-    setSuccessMessage(null);
 
     if (!formData.title.trim() || !formData.description.trim()) {
-      setError("All fields are required.");
+      toast.error("All fields are required.");
       return;
     }
 
     const assignedToArray = formData.assignedTo.split(",").map(id => id.trim());
-
     const token = localStorage.getItem("token");
+
     try {
       const response = await axios.post(
         "http://localhost:3444/user/asigntask",
@@ -75,15 +71,15 @@ export default function AddTask() {
       );
 
       if (response.status === 201 || response.data.success) {
-        setSuccessMessage("Task assigned successfully!");
-        setFormData({ title: "", description: "", assignedTo: "" }); // Reset form
-        router.push("/task"); // Navigate to task list page (update the route accordingly)
+        toast.success("Task assigned successfully!");
+        setFormData({ title: "", description: "", assignedTo: "" });
+        router.push("/task");
       } else {
-        setError("Failed to assign the task. Please try again.");
+        toast.error("Failed to assign the task. Please try again.");
       }
     } catch (error: any) {
       console.error("Error assigning task:", error);
-      setError(error.response?.data?.message || "An unexpected error occurred.");
+      toast.error(error.response?.data?.message || "An unexpected error occurred.");
     }
   };
 
@@ -93,88 +89,106 @@ export default function AddTask() {
 
   const handletask = () => {
     router.push('/viewTask');
-};
+  };
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50">
+      <Toaster position="top-right" />
       <TopBar />
-      <div className="max-w-md mx-auto mt-8">
-        <h1 className="text-2xl font-bold text-center mb-4">Assign Task</h1>
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8">
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          {successMessage && <p className="text-green-500 text-sm mb-4">{successMessage}</p>}
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Assign Task</h1>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                Task Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter task title"
+                required
+              />
+            </div>
 
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">
-              Task Title
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              className="input input-bordered w-full"
-              placeholder="Enter task title"
-            />
-          </div>
+            <div>
+              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                Task Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                rows={4}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="Enter task description"
+                required
+              />
+            </div>
 
-          <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">
-              Task Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
-              className="textarea textarea-bordered w-full"
-              placeholder="Enter task description"
-            />
-          </div>
+            <div>
+              <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700 mb-1">
+                Assign to (Employee IDs, comma separated)
+              </label>
+              <input
+                type="text"
+                id="assignedTo"
+                name="assignedTo"
+                value={formData.assignedTo}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                placeholder="e.g., EMP001, EMP002"
+                required
+              />
+            </div>
 
-          <div className="mb-4">
-            <label htmlFor="assignedTo" className="block text-gray-700 text-sm font-bold mb-2">
-              Assign to (Employee IDs, comma separated):
-            </label>
-            <input
-              type="text"
-              id="assignedTo"
-              name="assignedTo"
-              value={formData.assignedTo}
-              onChange={handleInputChange}
-              className="input input-bordered w-full"
-              placeholder="Enter employee IDs"
-            />
-          </div>
+            <div className="flex justify-center space-x-4">
+              <button
+                type="submit"
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200"
+              >
+                Assign Task
+              </button>
+              <button
+                type="button"
+                onClick={handletask}
+                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200"
+              >
+                View Assigned Tasks
+              </button>
+            </div>
+          </form>
+        </div>
 
-          <div className="flex justify-center">
-            <button type="submit" className="btn btn-primary">
-              Assign Task
-            </button>
-            <button
-                className=" hover:bg-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                onClick={handletask}>
-                View Assigned Task
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-center mb-4">Available Employees</h2>
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Available Employees</h2>
           <div className="overflow-x-auto">
-            <table className="table table-zebra w-full shadow-xl">
-              <thead>
+            <table className="w-full">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th>Employee ID</th>
-                  <th>Employee Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Employee ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Employee Name
+                  </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {employees.map((employee) => (
-                  <tr key={employee.userid}>
-                    <td>{employee.userid}</td>
-                    <td>{employee.name}</td>
+                  <tr key={employee.userid} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {employee.userid}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {employee.name}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -182,6 +196,6 @@ export default function AddTask() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
