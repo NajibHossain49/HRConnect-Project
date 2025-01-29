@@ -98,7 +98,7 @@ export default function AddTask() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Assign Task</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import StaffCard from "../staffcard/page";
+// import EmailForm from '@/app/EmailForm/page';
 
 interface UserRole {
     id: number;
@@ -98,6 +99,10 @@ export default function TopBar() {
                     <Link href="/dashboard/" className="btn btn-ghost text-xl">
                         Dashboard
                     </Link>
+                    <Link href="../../EmailForm" className="btn btn-ghost text-xl">
+                        EmailForm
+                    </Link>
+
                 </div>
                 <div className="navbar-center hidden lg:flex">
                     <ul className="menu menu-horizontal px-1">
