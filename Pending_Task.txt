@@ -1,0 +1,7 @@
+view_profile page UI enhance 
+
+update_profile page UI enhance
+
+Navbar UI enhance
+
+Home_page UI enhance 
