@@ -1,11 +1,11 @@
-
 "use client"
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import TopBar from '../components/topbar/page';
-
+import { toast } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast'
 
 interface FormData {
     name: string;
@@ -16,7 +16,6 @@ interface FormData {
 }
 
 export default function Profile() {
-
     const router = useRouter();
     const [formData, setFormData] = useState<FormData>({
         name: '',
@@ -26,6 +25,7 @@ export default function Profile() {
         myfile: null,
     });
     const [errors, setErrors] = useState<Partial<FormData>>({});
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -37,7 +37,6 @@ export default function Profile() {
                             Authorization: `Bearer ${token}`,
                         },
                     });
-
                     setFormData(response.data);
                 } else {
                     router.push('/signin');
@@ -60,7 +59,7 @@ export default function Profile() {
                 const token = localStorage.getItem('token');
                 const username = localStorage.getItem('username');
 
-                const response = await axios.put('http://localhost:3444/user/update_profile/' + formData.username, {
+                await axios.put('http://localhost:3444/user/update_profile/' + formData.username, {
                     name: formData.name,
                     email: formData.email,
                     address: formData.address
@@ -70,20 +69,19 @@ export default function Profile() {
                     },
                 });
 
-                // toast.success('Signup successful!');
+                toast.success('Profile updated successfully!');
                 localStorage.removeItem('username');
                 localStorage.setItem('username', formData.username);
                 router.push('/profile');
 
             } catch (error) {
                 console.error('Error during update:', error);
-                // toast.error('Signup failed. Please try again.');
+                toast.error('Update failed. Please try again.');
             }
         } else {
             setErrors(validationErrors);
         }
     };
-
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, files } = e.target;
@@ -122,52 +120,80 @@ export default function Profile() {
 
     return (
         <>
-            <TopBar />
-            <div className="max-w-md mx-auto mt-8">
-                <div className="flex items-center justify-center gap-2 mt-3 mb-3">
-                    <h1 className="">Update Profile</h1>
-                </div>
-                <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                    <div className=" flex items-center justify-center gap-2 mb-2">
-                        <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className="input input-bordered" placeholder="name" />
-                        {errors.name && <p className="text-red-500 text-xs italic">{errors.name}</p>}
-                    </div>
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                        <input type="text" id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange} className="input input-bordered" placeholder="Email" />
-                        {errors.email && <p className="text-red-500 text-xs italic">{errors.email}</p>}
-                    </div>
-                    <div className=" flex items-center justify-center gap-2 mb-2">
-                        <input type="text" id="username"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleInputChange} className="input input-bordered" placeholder="Username" />
-                        {errors.username && <p className="text-red-500 text-xs italic">{errors.username}</p>}
-                    </div>
-                    <div className=" flex items-center justify-center gap-2 mb-2">
-                        <input type="text" id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleInputChange} className="input input-bordered" placeholder="Address" />
-                        {errors.address && <p className="text-red-500 text-xs italic">{errors.address}</p>}
+            <Toaster position="top-right" />
+            <div className="min-h-screen bg-gray-50">
+                <TopBar />
+                <div className="max-w-xl mx-auto px-4 py-8">
+                    <div className="mb-8 text-center">
+                        <h1 className="text-3xl font-bold text-gray-900">Update Profile</h1>
+                        <p className="mt-2 text-gray-600">Manage your account information</p>
                     </div>
 
-                    <div className=" flex items-center justify-center gap-2 mb-2">
-                        <input type="file" id="myfile"
-                            name="myfile"
-                            onChange={handleInputChange} className="file-input file-input-bordered file-input-sm w-full max-w-xs" />
-                    </div>
-                    <div className="flex justify-center">
-                        <button
-                            type="submit"
-                            className="btn btn-active"
-                        >
-                            Update
-                        </button>
-                    </div>
-                </form>
+                    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-6">
+                        <div className="space-y-2">
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Full Name
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Enter your full name"
+                            />
+                            {errors.name && (
+                                <p className="text-red-600 text-sm">{errors.name}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Enter your email"
+                            />
+                            {errors.email && (
+                                <p className="text-red-600 text-sm">{errors.email}</p>
+                            )}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                                Address
+                            </label>
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                placeholder="Enter your address"
+                            />
+                            {errors.address && (
+                                <p className="text-red-600 text-sm">{errors.address}</p>
+                            )}
+                        </div>
+
+                        <div className="pt-4">
+                            <button
+                                type="submit"
+                                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+                            >
+                                Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </>
     );

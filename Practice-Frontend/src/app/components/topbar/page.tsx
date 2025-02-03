@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Link from "next/link";
 import StaffCard from "../staffcard/page";
-// import EmailForm from '@/app/EmailForm/page';
+import { Search, Settings, LogOut, User } from "lucide-react";
 
 interface UserRole {
     id: number;
@@ -26,6 +26,7 @@ export default function TopBar() {
     const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [jsondata, setJsondata] = useState<any[]>([]);
+    const [isSearchFocused, setIsSearchFocused] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -87,109 +88,118 @@ export default function TopBar() {
         }
     };
 
-    // Role-based rendering helper
     const hasAccess = (requiredRole: string): boolean => {
         return user.role.role === requiredRole;
     };
 
     return (
         <>
-            <div className="navbar bg-neutral text-neutral-content">
-                <div className="flex-1">
-                    <Link href="/dashboard/" className="btn btn-ghost text-xl">
-                        Dashboard
-                    </Link>
-                    <Link href="../../EmailForm" className="btn btn-ghost text-xl">
-                        EmailForm
-                    </Link>
+            <div className="bg-slate-900 text-white shadow-lg">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex items-center justify-between h-16 px-4">
+                        {/* Left section */}
+                        <div className="flex items-center space-x-4 gap-20">
+                            <Link href="/dashboard/" className="text-xl font-bold hover:text-blue-400 transition-colors">
+                                HRConnect
+                            </Link>
+                            <Link href="../../EmailForm" className="text-lg hover:text-blue-400 transition-colors">
+                                Email
+                            </Link>
+                        </div>
 
-                </div>
-                <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1">
-                        {/* Render links based on roles */}
-                        {hasAccess("Admin") && (
-                            <li>
-                                <Link href="/role/">Role</Link>
-                            </li>
-                        )}
-                        {hasAccess("Manager") && (
-                            <li>
-                                <Link href="/task/">Task</Link>
-                            </li>
-                        )}
-                        {hasAccess("Hr") && (
-                            <li>
-                                <Link href="/signup/">Add Employee</Link>
-                            </li>
-                        )}
-                        {hasAccess("Hr") && (
-                            <li><Link href="/staff/">Staff</Link></li>
-                        )}
-                    </ul>
-                </div>
-                <div className="flex-none gap-2">
-                    <div className="form-control">
-                        <input
-                            type="text"
-                            onChange={handleKeyUp}
-                            placeholder="Search"
-                            className="input input-bordered w-24 md:w-auto"
-                        />
-                    </div>
-                    <div className="dropdown dropdown-end">
-                        <div
-                            tabIndex={0}
-                            role="button"
-                            className="btn btn-ghost btn-circle avatar"
-                        >
-                            <div className="w-10 rounded-full">
-                                <img
-                                    alt="Avatar"
-                                    src={
-                                        "http://localhost:3444/user/getimage/" +
-                                        user.filename
-                                    }
+                        {/* Center section - Navigation */}
+                        <div className="hidden md:flex items-center space-x-6">
+                            {hasAccess("Admin") && (
+                                <Link href="/role/" className="hover:text-blue-400 transition-colors font-medium">
+                                    Role Management
+                                </Link>
+                            )}
+                            {hasAccess("Manager") && (
+                                <Link href="/task/" className="hover:text-blue-400 transition-colors font-medium">
+                                    Task Manager
+                                </Link>
+                            )}
+                            {hasAccess("Hr") && (
+                                <>
+                                    <Link href="/signup/" className="hover:text-blue-400 transition-colors font-medium">
+                                        Add Employee
+                                    </Link>
+                                    <Link href="/staff/" className="hover:text-blue-400 transition-colors font-medium">
+                                        Staff Directory
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Right section */}
+                        <div className="flex items-center space-x-4">
+                            {/* Search bar */}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    onChange={handleKeyUp}
+                                    onFocus={() => setIsSearchFocused(true)}
+                                    onBlur={() => setIsSearchFocused(false)}
+                                    placeholder="Search staff..."
+                                    className={`bg-slate-800 text-white rounded-lg pl-10 pr-4 py-2 w-48 focus:w-64 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                        isSearchFocused ? 'ring-2 ring-blue-500' : ''
+                                    }`}
                                 />
+                                <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
+                            </div>
+
+                            {/* Profile dropdown */}
+                            <div className="relative group">
+                                <button className="flex items-center space-x-2">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-blue-500 transition-all duration-300 group-hover:ring-4">
+                                        <img
+                                            alt="Avatar"
+                                            src={`http://localhost:3444/user/getimage/${user.filename}`}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </button>
+
+                                {/* Dropdown menu */}
+                                <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-lg shadow-lg py-1 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                    <button
+                                        onClick={handleProfile}
+                                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-slate-700 transition-colors"
+                                    >
+                                        <User className="h-4 w-4" />
+                                        <span>Profile</span>
+                                    </button>
+                                    {/* <Link href="" className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-slate-700 transition-colors">
+                                        <Settings className="h-4 w-4" />
+                                        <span>Settings</span>
+                                    </Link> */}
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full px-4 py-2 text-left flex items-center space-x-2 hover:bg-slate-700 text-red-400 transition-colors"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        <span>Logout</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <ul
-                            tabIndex={0}
-                            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-neutral text-neutral-content rounded-box w-52"
-                        >
-                            <li>
-                                <button
-                                    className=" hover:bg-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    onClick={handleProfile}
-                                >
-                                    Profile
-                                </button>
-                            </li>
-                            <li>
-                                <Link href="">Settings</Link>
-                            </li>
-                            <li>
-                                <button
-                                    className=" hover:bg-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    onClick={handleLogout}
-                                >
-                                    Logout
-                                </button>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-5 m-3">
-                {jsondata ? (
-                    jsondata.map((item: any, index: number) => (
-                        <div key={index}>
-                            <StaffCard data={item} />
-                        </div>
-                    ))
-                ) : (
-                    <div>Loading...</div>
-                )}
+            {/* Search Results Grid */}
+            <div className="max-w-7xl mx-auto px-4 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {jsondata ? (
+                        jsondata.map((item: any, index: number) => (
+                            <div key={index} className="transform hover:scale-105 transition-transform duration-300">
+                                <StaffCard data={item} />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="col-span-full text-center text-gray-500">Loading...</div>
+                    )}
+                </div>
             </div>
         </>
     );
