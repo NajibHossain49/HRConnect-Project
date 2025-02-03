@@ -103,7 +103,7 @@ HRConnect supports three primary roles, each with distinct permissions:
 
 ## 🧑‍💻 Author
 
-Developed with ❤️ by **[NAJIB HOSSAIN](https://github.com/NajibHossain49) & [MD Tanvir islam](https://github.com/mdtanvirisl)**  
+Developed with ❤️ by **[NAJIB HOSSAIN](https://github.com/NajibHossain49)**  
  
 
 ## 🌟 Show Your Support
